@@ -1,14 +1,23 @@
-const request = require('postman-request')
 const geocode = require('./utils/geocode')
 const forecast = require('./utils/forecast')
 
+const address = process.argv[2]
 
-forecast(-75.7088, 44.1545, (error, data) => {
-    console.log('Error', error)
-    console.log('Data', data)
-  })
+if(!address){
+    console.log('Please provide an address')
+}else{
+    geocode(address,(error,data)=>{
+        if (error){
+            return console.log(error)
+        }
+        forecast(data.latitude, data.longitude, (error, forecastData) => {
+            if (error){
+                return console.log(error)
+            }
+            console.log(data.location)
+            console.log(forecastData)
+          })
+    })
+}
 
-geocode('Aguda surulere Lagos',(error,data)=>{
-    console.log('Error',error)
-    console.log('Data',data)
-})
+
