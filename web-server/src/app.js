@@ -1,6 +1,10 @@
 const express = require('express')
 const path = require('path')
 const hbs = require('hbs')
+const request = require('postman-request')
+
+const geocode = require('./utils/geocode')
+const forecast = require('./utils/forecast')
 
 const app = express()
 
@@ -39,6 +43,36 @@ app.get('/help',(req,res)=>{
     res.render('help',{
         message: 'What do you need help with?',
         title : 'Help page'
+    })
+})
+
+app.get('/weather', (req, res) => {
+    if (!req.query.address) {
+        return res.send({
+            error: 'Please provide a valid address'
+        })
+    }
+
+    //usig object destructuring to retrieve long lat and loc from data in the callback! awesome js
+    geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
+        if (error) {
+            return res.send({
+                error: 'error'
+            })
+        }
+        forecast(latitude, longitude, (error, forecastData) => {
+            if (error) {
+                return res.send({
+                    error: 'error'
+                })
+            }
+            return res.send({
+                forcast: forecastData,
+                location: location,
+                address: req.query.address
+            })
+
+        })
     })
 })
 
