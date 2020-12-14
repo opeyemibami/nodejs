@@ -42,6 +42,20 @@ app.get('/help',(req,res)=>{
     })
 })
 
+app.get('/help/*',(req,res)=>{
+    res.render('error',{
+        context: "Help article page not found",
+        title : 'Help page'
+    })
+})
+
+app.get('*',(req,res)=>{
+    res.render('error',{
+        context: "Page not found",
+        title : 'pages'
+    })
+})
+
 app.listen(3000,()=>{
     console.log('Server is up on port 3000')
 })
